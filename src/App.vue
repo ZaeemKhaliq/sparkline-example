@@ -1,19 +1,31 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>SPARKLINE</h1>
+    <div class="sparkline-container">
+      <Trend
+        :data="[0, 3, 6, 5, 3, 5, 3, 2, 1]"
+        :padding="8"
+        :radius="1"
+        :stroke-width="1"
+        :stroke-linecap="butt"
+        :smooth="true"
+        auto-draw
+        isRecording
+        :minXValues="10"
+      ></Trend>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Trend from "./components/trend";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    Trend,
+  },
+};
 </script>
 
 <style>
@@ -24,5 +36,9 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+.sparkline-container {
+  height: 25rem;
 }
 </style>
