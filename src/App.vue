@@ -74,7 +74,7 @@
       <Trend
         :data="dataValues"
         :padding="8"
-        :radius="1"
+        :radius="8"
         :stroke-width="1"
         :stroke-linecap="butt"
         :smooth="true"
@@ -82,6 +82,7 @@
         isRecording
         :minValues="+minimumValues"
         :maxValues="+maximumValues"
+        :autoDrawDuration="2000"
         class="sparkline"
         :pathFillColor="fillColor"
       ></Trend>

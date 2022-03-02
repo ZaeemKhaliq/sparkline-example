@@ -1,7 +1,7 @@
 import Path from "./path";
 import Gradient from "./gradient";
 
-import { genPoints } from "../helpers/path";
+import { genPoints, genPath } from "../helpers/path";
 
 export default {
   name: "Trend",
@@ -52,6 +52,10 @@ export default {
       type: Number,
       default: 30,
     },
+    firstRender: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   watch: {
@@ -73,8 +77,15 @@ export default {
             length - (this.lastLength || 0)
           );
           path.getBoundingClientRect();
-          path.style.transition = `stroke-dashoffset ${this.autoDrawDuration}ms ${this.autoDrawEasing}`;
+          if (!this.lastLength) {
+            path.style.transition = `stroke-dashoffset ${this.autoDrawDuration}ms ${this.autoDrawEasing}`;
+          }
           path.style.strokeDashoffset = 0;
+
+          if (this.lastLength) {
+            this.$props.firstRender = false;
+          }
+
           this.lastLength = length;
         });
       },
@@ -112,6 +123,9 @@ export default {
     const lastPoint = points[points.length - 1];
     console.log(points);
 
+    const path = genPath(points, props.radius);
+    const drawDuration = props.autoDrawDuration;
+
     return h(
       "svg",
       {
@@ -130,24 +144,60 @@ export default {
           ref: "path",
         }),
         props.isRecording
-          ? h("circle", {
-              attrs: {
-                cx: `${lastPoint.x + 3}`,
-                cy: `${lastPoint.y}`,
-                r: "7",
-                style: `fill: #1DB55A; fill-opacity:0.2;`,
+          ? h(
+              "circle",
+              {
+                attrs: {
+                  cx: `${!props.firstRender ? lastPoint.x + 3 : null}`,
+                  cy: `${!props.firstRender ? lastPoint.y : null}`,
+                  r: "7",
+                  style: `fill: #1DB55A; fill-opacity:0.2; `,
+                },
               },
-            })
+              props.firstRender && [
+                h("animateMotion", {
+                  attrs: {
+                    dur: `${drawDuration}ms`,
+                    path: path,
+                    fill: "freeze",
+                    calcMode: "spline",
+                    keySplines: `0.25 0.1 0.25 1;
+                    0.25 0.1 0.25 1;
+                    0.25 0.1 0.25 1;
+                    0.25 0.1 0.25 1`,
+                    keyTimes: `0;0.25;0.4;0.55;1`,
+                  },
+                }),
+              ]
+            )
           : null,
         props.isRecording
-          ? h("circle", {
-              attrs: {
-                cx: `${lastPoint.x + 3}`,
-                cy: `${lastPoint.y}`,
-                r: "3",
-                style: `fill: white; stroke: #1DB55A; stroke-width: 1.5;`,
+          ? h(
+              "circle",
+              {
+                attrs: {
+                  cx: `${props.firstRender ? null : lastPoint.x + 3}`,
+                  cy: `${props.firstRender ? null : lastPoint.y}`,
+                  r: "3",
+                  style: `fill: white; stroke: #1DB55A; stroke-width: 1.5;`,
+                },
               },
-            })
+              props.firstRender && [
+                h("animateMotion", {
+                  attrs: {
+                    dur: `${drawDuration}ms`,
+                    path: path,
+                    fill: "freeze",
+                    calcMode: "spline",
+                    keySplines: `0.25 0.1 0.25 1;
+                    0.25 0.1 0.25 1;
+                    0.25 0.1 0.25 1;
+                    0.25 0.1 0.25 1`,
+                    keyTimes: `0;0.25;0.4;0.55;1`,
+                  },
+                }),
+              ]
+            )
           : null,
       ]
     );
