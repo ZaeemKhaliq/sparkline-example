@@ -10,12 +10,15 @@ export function genPoints(
   arr,
   { minX, minY, maxX, maxY },
   { max, min },
-  minXValues
+  { minValues, maxValues }
 ) {
-  arr = arr.map((item) => (typeof item === "number" ? item : item.value));
-  const minValue = Math.min(...arr, min) - 0.001;
-  const length = arr.length >= minXValues ? arr.length - 1 : minXValues - 1;
+  maxValues = maxValues < minValues ? minValues : maxValues;
 
+  arr = arr.length > maxValues ? arr.slice(arr.length - maxValues) : arr;
+  arr = arr.map((item) => (typeof item === "number" ? item : item.value));
+
+  const minValue = Math.min(...arr, min) - 0.001;
+  const length = arr.length >= minValues ? arr.length - 1 : minValues - 1;
   const gridX = (maxX - minX) / length;
   const gridY = (maxY - minY) / (Math.max(...arr, max) + 0.001 - minValue);
 

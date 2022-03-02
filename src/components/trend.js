@@ -20,13 +20,9 @@ export default {
       type: String,
       default: "ease",
     },
-    gradient: {
-      type: Array,
-      default: () => ["#000"],
-    },
-    gradientDirection: {
+    pathFillColor: {
       type: String,
-      default: "top",
+      default: "",
     },
     max: {
       type: Number,
@@ -48,9 +44,13 @@ export default {
     },
     smooth: Boolean,
     isRecording: Boolean,
-    minXValues: {
+    minValues: {
       type: Number,
-      default: 10,
+      default: 20,
+    },
+    maxValues: {
+      type: Number,
+      default: 30,
     },
   },
 
@@ -107,7 +107,7 @@ export default {
         max: maxValue,
         min: minValue,
       },
-      props.minXValues
+      { minValues: props.minValues, maxValues: props.maxValues }
     );
     const lastPoint = points[points.length - 1];
     console.log(points);
@@ -116,8 +116,8 @@ export default {
       "svg",
       {
         attrs: {
-          width: width || "100%",
-          height: height || "100%",
+          width: width || "700",
+          height: height || "200",
           viewBox: `0 0 ${viewWidth} ${viewHeight}`,
         },
       },

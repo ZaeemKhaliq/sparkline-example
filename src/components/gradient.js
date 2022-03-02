@@ -1,6 +1,4 @@
 export default {
-  props: ["gradient", "gradientDirection", "id"],
-
   render(h) {
     return h("defs", [
       h(
@@ -24,7 +22,7 @@ export default {
           h("stop", {
             attrs: {
               offset: "0%",
-              "stop-color": "rgba(195, 190, 255, 0.25)",
+              "stop-color": "rgba(195, 190, 255, 1)",
             },
           }),
           h("stop", {
