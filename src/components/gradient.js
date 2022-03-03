@@ -1,5 +1,6 @@
 export default {
   render(h) {
+
     return h("defs", [
       h(
         "linearGradient",

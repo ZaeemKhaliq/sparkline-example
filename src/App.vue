@@ -2,6 +2,7 @@
   <div id="app">
     <h1>SPARKLINE</h1>
 
+
     <!-- Try entering last value as'0'. Only then the gradient renders correctly -->
     <label for="value-min" class="min-values"
       >Minimum number of values =
@@ -87,6 +88,9 @@
         :pathFillColor="fillColor"
       ></Trend>
     </div>
+
+
+
   </div>
 </template>
 
@@ -98,6 +102,7 @@ export default {
   components: {
     Trend,
   },
+
   data() {
     return {
       minimumValues: 40,
@@ -212,10 +217,12 @@ export default {
   margin-top: 60px;
 }
 
+
 .sparkline-container {
   height: 25rem;
   margin-top: 1rem;
 }
+
 
 .sparkline {
   border: 1px solid black;
