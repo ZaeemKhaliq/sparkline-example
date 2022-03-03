@@ -1,40 +1,38 @@
 export default {
-  props: ["gradient", "gradientDirection", "id"],
-
   render(h) {
-    const { gradient, gradientDirection, id } = this;
-    const len = gradient.length - 1 || 1;
-    const stops = gradient
-      .slice()
-      .reverse()
-      .map((color, index) =>
-        h("stop", {
-          attrs: {
-            offset: index / len,
-            "stop-color": color,
-          },
-        })
-      );
 
     return h("defs", [
       h(
         "linearGradient",
         {
           attrs: {
-            id,
-            /*
-              x1: 0,
-              y1: 0,
-              x2: 0,
-              y2: 1
-              */
-            x1: +(gradientDirection === "left"),
-            y1: +(gradientDirection === "top"),
-            x2: +(gradientDirection === "right"),
-            y2: +(gradientDirection === "bottom"),
+            id: "fill-color",
+
+            x1: 0,
+            y1: 0, // Top to bottom
+            x2: 0,
+            y2: 1,
+
+            // x1: 0,
+            // y1: 1, // Bottom to top
+            // x2: 0,
+            // y2: 0,
           },
         },
-        stops
+        [
+          h("stop", {
+            attrs: {
+              offset: "0%",
+              "stop-color": "rgba(195, 190, 255, 1)",
+            },
+          }),
+          h("stop", {
+            attrs: {
+              offset: "90%",
+              "stop-color": "white",
+            },
+          }),
+        ]
       ),
     ]);
   },

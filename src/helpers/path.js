@@ -6,10 +6,21 @@ import { checkCollinear, getDistance, moveTo } from "./math";
  * @param  {object}             boundary
  * @return {object[]}
  */
-export function genPoints(arr, { minX, minY, maxX, maxY }, { max, min }) {
+export function genPoints(
+  arr,
+  { minX, minY, maxX, maxY },
+  { max, min },
+  { minValues, maxValues }
+) {
+  maxValues = maxValues < minValues ? minValues : maxValues;
+
+  arr = arr.length > maxValues ? arr.slice(arr.length - maxValues) : arr;
   arr = arr.map((item) => (typeof item === "number" ? item : item.value));
+
   const minValue = Math.min(...arr, min) - 0.001;
-  const gridX = (maxX - minX) / (arr.length - 1);
+  const length = arr.length >= minValues ? arr.length - 1 : minValues - 1;
+  const gridX = (maxX - minX) / length;
+
   const gridY = (maxY - minY) / (Math.max(...arr, max) + 0.001 - minValue);
 
   return arr.map((value, index) => {
@@ -46,6 +57,7 @@ export function genPath(points, radius) {
           getDistance(prev, point),
           getDistance(next, point)
         );
+
         const isTooCloseForRadius = threshold / 2 < radius;
         const radiusForPoint = isTooCloseForRadius ? threshold / 2 : radius;
 
