@@ -38,11 +38,19 @@ export function genPoints(
 /**
  * From https://github.com/unsplash/react-trend/blob/master/src/helpers/DOM.helpers.js#L18
  */
-export function genPath(points, radius) {
+export function genPath(points, radius, pathType) {
+  let maxPoint;
+  if (pathType === "filled") {
+    maxPoint = Math.max(...points.map((point) => point.y));
+
+    const pointsObj = { x: points[points.length - 1].x, y: maxPoint };
+    points.push(pointsObj);
+  }
+
   const start = points.shift();
 
   return (
-    `M${start.x} ${start.y}` +
+    `M${start.x} ${pathType === "filled" ? maxPoint : start.y}` +
     points
       .map((point, index) => {
         const next = points[index + 1];
@@ -50,6 +58,9 @@ export function genPath(points, radius) {
         const isCollinear = next && checkCollinear(next, point, prev);
 
         if (!next || isCollinear) {
+          if (pathType === "filled" && index === 0) {
+            return `L${start.x} ${point.y}L${point.x} ${point.y}`;
+          }
           return `L${point.x} ${point.y}`;
         }
 
@@ -63,6 +74,13 @@ export function genPath(points, radius) {
 
         const before = moveTo(prev, point, radiusForPoint);
         const after = moveTo(next, point, radiusForPoint);
+
+        if (pathType === "filled" && index === 0) {
+          return `L${start.x} ${start.y}L${before.x} ${before.y}S${point.x} ${point.y} ${after.x} ${after.y}`;
+        }
+        if (index === points.length - 2 && pathType === "filled") {
+          return `L${before.x} ${before.y}S${point.x} ${point.y} ${point.x} ${point.y}`;
+        }
 
         return `L${before.x} ${before.y}S${point.x} ${point.y} ${after.x} ${after.y}`;
       })
