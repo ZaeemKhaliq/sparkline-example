@@ -11,8 +11,7 @@ export default {
     "min",
     "minValues",
     "maxValues",
-    "strokeColor",
-    "strokeWidth",
+    "pathFillColor",
   ],
 
   render(h) {
@@ -25,8 +24,7 @@ export default {
       min,
       minValues,
       maxValues,
-      strokeColor,
-      strokeWidth,
+      pathFillColor,
     } = this;
     const points = genPoints(
       data,
@@ -34,14 +32,12 @@ export default {
       { max, min },
       { minValues, maxValues }
     );
-    const d = genPath(points, smooth ? radius : 0);
+    const d = genPath(points, smooth ? radius : 0, "filled");
 
     return h("path", {
       attrs: {
         d,
-        fill: "none",
-        stroke: strokeColor ? strokeColor : `#30679A`,
-        "stroke-width": strokeWidth,
+        fill: pathFillColor ? pathFillColor : "url(#fill-color)",
       },
     });
   },

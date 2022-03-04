@@ -1,4 +1,5 @@
 import Path from "./path";
+import PathFilled from "./pathFilled";
 import Gradient from "./gradient";
 
 import { genPoints, genPath } from "../helpers/path";
@@ -20,10 +21,7 @@ export default {
       type: String,
       default: "ease",
     },
-    pathFillColor: {
-      type: String,
-      default: "",
-    },
+
     max: {
       type: Number,
       default: -Infinity,
@@ -52,21 +50,34 @@ export default {
       type: Number,
       default: 30,
     },
-    firstRender: {
-      type: Boolean,
-      default: true,
+    strokeColor: {
+      type: String,
     },
+    strokeWidth: {
+      type: Number,
+      default: 1,
+    },
+    pathFillColor: {
+      type: String,
+      default: "",
+    },
+  },
+  data() {
+    return {
+      firstRender: true,
+    };
   },
 
   watch: {
     data: {
       immediate: true,
       handler() {
-        this.$nextTick(() => {
+        this.$nextTick(async () => {
           if (this.$isServer || !this.$refs.path || !this.autoDraw) {
             return;
           }
 
+          const props = this.$props;
           const path = this.$refs.path.$el;
 
           const length = path.getTotalLength();
@@ -83,7 +94,38 @@ export default {
           path.style.strokeDashoffset = 0;
 
           if (this.lastLength) {
-            this.$props.firstRender = false;
+            this.firstRender = false;
+          }
+
+          let outerCircle = document.querySelector(".outer-circle");
+
+          const { boundary, max, min } = props;
+          const maxValue = max;
+          const minValue = min;
+
+          const points = genPoints(
+            props.data,
+            boundary,
+            {
+              max: maxValue,
+              min: minValue,
+            },
+            { minValues: props.minValues, maxValues: props.maxValues }
+          );
+
+          const lastPoint = points[points.length - 1];
+
+          if (
+            outerCircle.dataset.cx !== "null" &&
+            outerCircle.dataset.cy !== "null"
+          ) {
+            outerCircle.style.transformOrigin = `${Number(
+              outerCircle.dataset.cx
+            )}px ${Number(outerCircle.dataset.cy)}px`;
+          } else if (this.lastLength) {
+            outerCircle.style.transformOrigin = `${lastPoint.x + 3}px ${
+              lastPoint.y
+            }px`;
           }
 
           this.lastLength = length;
@@ -94,6 +136,7 @@ export default {
 
   render(h) {
     if (!this.data || this.data.length < 2) return;
+
     const { width, height, padding } = this;
     const viewWidth = width || 300;
     const viewHeight = height || 75;
@@ -121,7 +164,6 @@ export default {
       { minValues: props.minValues, maxValues: props.maxValues }
     );
     const lastPoint = points[points.length - 1];
-    console.log(points);
 
     const path = genPath(points, props.radius);
     const drawDuration = props.autoDrawDuration;
@@ -139,6 +181,10 @@ export default {
         h(Gradient, {
           props,
         }),
+        h(PathFilled, {
+          props,
+          ref: "pathFilled",
+        }),
         h(Path, {
           props,
           ref: "path",
@@ -148,26 +194,30 @@ export default {
               "circle",
               {
                 attrs: {
-                  cx: `${!props.firstRender ? lastPoint.x + 3 : null}`,
-                  cy: `${!props.firstRender ? lastPoint.y : null}`,
-                  r: "7",
-                  style: `fill: #1DB55A; fill-opacity:0.2; `,
+                  class: "outer-circle",
+                  cx: `${!this.firstRender ? lastPoint.x + 3 : null}`,
+                  cy: `${!this.firstRender ? lastPoint.y : null}`,
+                  "data-cx": `${!this.firstRender ? lastPoint.x + 3 : null}`,
+                  "data-cy": `${!this.firstRender ? lastPoint.y : null}`,
+                  r: "5",
+                  // style: `fill: #1DB55A; fill-opacity:0.2; `,
                 },
               },
-              props.firstRender && [
-                h("animateMotion", {
-                  attrs: {
-                    dur: `${drawDuration}ms`,
-                    path: path,
-                    fill: "freeze",
-                    calcMode: "spline",
-                    keySplines: `0.25 0.1 0.25 1;
+              [
+                this.firstRender &&
+                  h("animateMotion", {
+                    attrs: {
+                      dur: `${drawDuration}ms`,
+                      path: path,
+                      fill: "freeze",
+                      calcMode: "spline",
+                      keySplines: `0.25 0.1 0.25 1;
                     0.25 0.1 0.25 1;
                     0.25 0.1 0.25 1;
                     0.25 0.1 0.25 1`,
-                    keyTimes: `0;0.25;0.4;0.55;1`,
-                  },
-                }),
+                      keyTimes: `0;0.25;0.4;0.55;1`,
+                    },
+                  }),
               ]
             )
           : null,
@@ -176,26 +226,27 @@ export default {
               "circle",
               {
                 attrs: {
-                  cx: `${props.firstRender ? null : lastPoint.x + 3}`,
-                  cy: `${props.firstRender ? null : lastPoint.y}`,
+                  cx: `${this.firstRender ? null : lastPoint.x + 3}`,
+                  cy: `${this.firstRender ? null : lastPoint.y}`,
                   r: "3",
                   style: `fill: white; stroke: #1DB55A; stroke-width: 1.5;`,
                 },
               },
-              props.firstRender && [
-                h("animateMotion", {
-                  attrs: {
-                    dur: `${drawDuration}ms`,
-                    path: path,
-                    fill: "freeze",
-                    calcMode: "spline",
-                    keySplines: `0.25 0.1 0.25 1;
+              [
+                this.firstRender &&
+                  h("animateMotion", {
+                    attrs: {
+                      dur: `${drawDuration}ms`,
+                      path: path,
+                      fill: "freeze",
+                      calcMode: "spline",
+                      keySplines: `0.25 0.1 0.25 1;
                     0.25 0.1 0.25 1;
                     0.25 0.1 0.25 1;
                     0.25 0.1 0.25 1`,
-                    keyTimes: `0;0.25;0.4;0.55;1`,
-                  },
-                }),
+                      keyTimes: `0;0.25;0.4;0.55;1`,
+                    },
+                  }),
               ]
             )
           : null,

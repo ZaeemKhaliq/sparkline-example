@@ -31,7 +31,7 @@
 
     <p>
       <b
-        >Selected data values according to max length ({{
+        >Selected data values according to set max values ({{
           slicedDataValues.length
         }}):
       </b>
@@ -40,51 +40,90 @@
       </span>
     </p>
 
-    <label for="add-value">Add value to end: </label>
-    <input type="text" id="add-value" @change="handleAddValueChange" />
-    <button :style="{ marginLeft: '1rem' }" @click="handleAddValue">Add</button>
-    <button :style="{ marginLeft: '1rem' }" @click="addRandomValueEnd">
-      Add random value
-    </button>
-    <button :style="{ marginLeft: '1rem' }" @click="handleRemoveEnd">
-      Remove value from end
-    </button>
+    <div class="add-value-container">
+      <div class="add-first-index-div">
+        <div class="add-first-index-input">
+          <label for="add-first-index">Add value to beginning: </label>
+          <input
+            type="text"
+            id="add-first-index"
+            @change="handleFirstIndexChange"
+          />
+        </div>
+        <div class="add-first-index-buttons">
+          <button class="add-button" @click="handleAddFirstIndex">Add</button>
+          <button
+            class="add-random-button"
+            :style="{ marginLeft: '1rem' }"
+            @click="addRandomValueStart"
+          >
+            Add random value
+          </button>
+          <button
+            class="remove-button"
+            :style="{ marginLeft: '1rem' }"
+            @click="handleRemoveStart"
+          >
+            Remove value from beginning
+          </button>
+        </div>
+      </div>
 
-    <br />
+      <div class="add-value-div">
+        <div class="add-value-input">
+          <label for="add-value">Add value to end: </label>
+          <input type="text" id="add-value" @change="handleAddValueChange" />
+        </div>
+        <div class="add-value-buttons">
+          <button class="add-button" @click="handleAddValue">Add</button>
+          <button
+            class="add-random-button"
+            :style="{ marginLeft: '1rem' }"
+            @click="addRandomValueEnd"
+          >
+            Add random value
+          </button>
+          <button
+            class="remove-button"
+            :style="{ marginLeft: '1rem' }"
+            @click="handleRemoveEnd"
+          >
+            Remove value from end
+          </button>
+        </div>
+      </div>
+    </div>
 
-    <label for="add-first-index">Add value to beginning: </label>
-    <input type="text" id="add-first-index" @change="handleFirstIndexChange" />
-    <button :style="{ marginLeft: '1rem' }" @click="handleAddFirstIndex">
-      Add
-    </button>
-    <button :style="{ marginLeft: '1rem' }" @click="addRandomValueStart">
-      Add random value
-    </button>
-    <button :style="{ marginLeft: '1rem' }" @click="handleRemoveStart">
-      Remove value from beginning
-    </button>
+    <div class="graph-controls">
+      <div class="fill-color">
+        <label> Change fill color </label>
+        <input type="text" v-model="fillColor" />
+      </div>
+      <div class="stroke-color">
+        <label> Change line color </label>
+        <input type="text" v-model="strokeColor" />
+      </div>
 
-    <br />
-
-    <label>
-      Add fill color:
-      <input type="text" v-model="fillColor" />
-    </label>
+      <div class="stroke-width">
+        <label> Change line width </label>
+        <input type="number" v-model="strokeWidth" min="0" />
+      </div>
+    </div>
     <div class="sparkline-container">
       <Trend
+        class="sparkline"
         :data="dataValues"
         :padding="8"
         :radius="8"
-        :stroke-width="1"
-        :stroke-linecap="butt"
         :smooth="true"
         auto-draw
-        isRecording
+        :isRecording="true"
+        :autoDrawDuration="2000"
         :minValues="+minimumValues"
         :maxValues="+maximumValues"
-        :autoDrawDuration="2000"
-        class="sparkline"
         :pathFillColor="fillColor"
+        :strokeColor="strokeColor"
+        :strokeWidth="strokeWidth"
       ></Trend>
     </div>
   </div>
@@ -103,14 +142,16 @@ export default {
       minimumValues: 40,
       maximumValues: 60,
       dataValues: [
-        0, 10, 15, 25, 30, 35, 40, 50, 60, 43, 12, 31, 46, 43, 37, 28, 10, 15,
-        18, 21, 45, 38, 39, 17, 14, 11, 8, 7, 3, 9, 5, 15, 34, 38, 49, 45, 60,
-        67, 70, 54, 51, 43, 40, 36, 34, 32, 28, 25, 14, 23, 32, 31, 30, 30, 26,
-        23, 15, 19, 50,
+        30, 30, 30, 35, 40, 50, 60, 43, 12, 31, 46, 43, 37, 28, 10, 15, 18, 21,
+        45, 38, 39, 17, 14, 11, 8, 7, 3, 9, 5, 15, 34, 38, 49, 45, 60, 67, 70,
+        54, 51, 43, 40, 36, 34, 32, 28, 25, 14, 23, 32, 31, 30, 30, 26, 23, 15,
+        19, 50,
       ],
       newValue: null,
       firstIndexValue: null,
       fillColor: "",
+      strokeColor: "",
+      strokeWidth: 1,
     };
   },
   methods: {
@@ -209,7 +250,82 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+
+.add-value-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 2rem;
+}
+
+.add-value-buttons,
+.add-first-index-buttons {
+  margin-top: 0.5rem;
+}
+
+.add-button,
+.add-random-button,
+.remove-button {
+  border: none;
+  padding: 0.3rem 0.7rem;
+  border-radius: 0.3rem;
+  cursor: pointer;
+}
+
+.add-button {
+  background-color: rgb(49, 204, 132);
+  color: white;
+}
+
+.add-button:hover {
+  background-color: rgb(39, 170, 109);
+}
+
+.add-random-button {
+  background-color: rgb(0, 119, 255);
+  color: white;
+}
+
+.add-random-button:hover {
+  background-color: rgb(20, 101, 194);
+}
+
+.remove-button {
+  background-color: rgb(240, 49, 49);
+  color: white;
+}
+
+.remove-button:hover {
+  background-color: rgb(184, 31, 31);
+}
+
+.graph-controls {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+
+.graph-controls .fill-color,
+.graph-controls .stroke-color,
+.graph-controls .stroke-width {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.graph-controls input {
+  height: 1.3rem;
+  font-size: 1.1rem;
+  padding: 0.5rem;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+}
+
+.graph-controls input[type="number"] {
+  height: 1.4rem;
+  width: 3rem;
 }
 
 .sparkline-container {
@@ -219,5 +335,28 @@ export default {
 
 .sparkline {
   border: 1px solid black;
+}
+
+.outer-circle {
+  fill: #1db55a;
+  transform: scale(0.7);
+  animation: pulse 2s infinite ease;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.5);
+    fill-opacity: 1;
+  }
+
+  70% {
+    transform: scale(2);
+    fill-opacity: 0;
+  }
+
+  100% {
+    transform: scale(0.7);
+    fill-opacity: 0;
+  }
 }
 </style>
