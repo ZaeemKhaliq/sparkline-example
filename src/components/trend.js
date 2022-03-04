@@ -2,6 +2,7 @@ import Path from "./path";
 import PathFilled from "./pathFilled";
 import Gradient from "./gradient";
 
+
 import { genPoints, genPath } from "../helpers/path";
 
 export default {
@@ -21,7 +22,6 @@ export default {
       type: String,
       default: "ease",
     },
-
     max: {
       type: Number,
       default: -Infinity,
@@ -41,6 +41,7 @@ export default {
       default: 10,
     },
     smooth: Boolean,
+
     isRecording: Boolean,
     minValues: {
       type: Number,
@@ -88,6 +89,7 @@ export default {
             length - (this.lastLength || 0)
           );
           path.getBoundingClientRect();
+
           if (!this.lastLength) {
             path.style.transition = `stroke-dashoffset ${this.autoDrawDuration}ms ${this.autoDrawEasing}`;
           }
