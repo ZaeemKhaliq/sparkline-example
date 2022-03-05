@@ -61,6 +61,18 @@ export default {
       type: String,
       default: "",
     },
+    outerCircleRadius: {
+      type: Number,
+      default: 5,
+    },
+    innerCircleRadius: {
+      type: Number,
+      default: 3,
+    },
+    innerCircleStrokeWidth: {
+      type: Number,
+      default: 1.5,
+    },
   },
   data() {
     return {
@@ -115,14 +127,7 @@ export default {
 
           const lastPoint = points[points.length - 1];
 
-          if (
-            outerCircle.dataset.cx !== "null" &&
-            outerCircle.dataset.cy !== "null"
-          ) {
-            outerCircle.style.transformOrigin = `${Number(
-              outerCircle.dataset.cx
-            )}px ${Number(outerCircle.dataset.cy)}px`;
-          } else if (this.lastLength) {
+          if (this.lastLength) {
             outerCircle.style.transformOrigin = `${lastPoint.x + 3}px ${
               lastPoint.y
             }px`;
@@ -197,9 +202,7 @@ export default {
                   class: "outer-circle",
                   cx: `${!this.firstRender ? lastPoint.x + 3 : null}`,
                   cy: `${!this.firstRender ? lastPoint.y : null}`,
-                  "data-cx": `${!this.firstRender ? lastPoint.x + 3 : null}`,
-                  "data-cy": `${!this.firstRender ? lastPoint.y : null}`,
-                  r: "5",
+                  r: props.outerCircleRadius,
                   // style: `fill: #1DB55A; fill-opacity:0.2; `,
                 },
               },
@@ -228,8 +231,9 @@ export default {
                 attrs: {
                   cx: `${this.firstRender ? null : lastPoint.x + 3}`,
                   cy: `${this.firstRender ? null : lastPoint.y}`,
-                  r: "3",
-                  style: `fill: white; stroke: #1DB55A; stroke-width: 1.5;`,
+                  r: props.innerCircleRadius,
+                  "stroke-width": props.innerCircleStrokeWidth,
+                  style: `fill: white; stroke: #1DB55A;`,
                 },
               },
               [
