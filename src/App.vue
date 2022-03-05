@@ -97,17 +97,49 @@
 
     <div class="graph-controls">
       <div class="fill-color">
-        <label> Change fill color </label>
-        <input type="text" v-model="fillColor" />
+        <label for="graph-fill-color"> Change fill color </label>
+        <input type="text" id="graph-fill-color" v-model="fillColor" />
       </div>
       <div class="stroke-color">
-        <label> Change line color </label>
-        <input type="text" v-model="strokeColor" />
+        <label for="stroke-color"> Change line color </label>
+        <input type="text" id="stroke-color" v-model="strokeColor" />
       </div>
 
       <div class="stroke-width">
-        <label> Change line width </label>
-        <input type="number" v-model="strokeWidth" min="0" />
+        <label for="stroke-width"> Change line width </label>
+        <input type="number" id="stroke-width" v-model="strokeWidth" min="0" />
+      </div>
+
+      <div class="outer-circle-radius">
+        <label for="outer-circle-radius"> Change outer circle radius </label>
+        <input
+          type="number"
+          id="outer-circle-radius"
+          v-model="outerCircleRadius"
+          min="0"
+        />
+      </div>
+
+      <div class="inner-circle-radius">
+        <label for="inner-circle-radius"> Change inner circle radius </label>
+        <input
+          type="number"
+          id="inner-circle-radius"
+          v-model="innerCircleRadius"
+          min="0"
+        />
+      </div>
+
+      <div class="inner-circle-stroke-width">
+        <label for="inner-circle-stroke-width">
+          Change inner circle stroke width
+        </label>
+        <input
+          type="number"
+          id="inner-circle-stroke-width"
+          v-model="innerCircleStrokeWidth"
+          min="0"
+        />
       </div>
     </div>
     <div class="sparkline-container">
@@ -125,6 +157,9 @@
         :pathFillColor="fillColor"
         :strokeColor="strokeColor"
         :strokeWidth="strokeWidth"
+        :innerCircleRadius="innerCircleRadius"
+        :outerCircleRadius="outerCircleRadius"
+        :innerCircleStrokeWidth="innerCircleStrokeWidth"
       ></Trend>
     </div>
 
@@ -157,6 +192,9 @@ export default {
       fillColor: "",
       strokeColor: "",
       strokeWidth: 1,
+      outerCircleRadius: 5,
+      innerCircleRadius: 3,
+      innerCircleStrokeWidth: 1.5,
     };
   },
   methods: {
@@ -313,7 +351,10 @@ export default {
 
 .graph-controls .fill-color,
 .graph-controls .stroke-color,
-.graph-controls .stroke-width {
+.graph-controls .stroke-width,
+.graph-controls .outer-circle-radius,
+.graph-controls .inner-circle-radius,
+.graph-controls .inner-circle-stroke-width {
   display: flex;
   flex-direction: column;
   justify-content: center;
